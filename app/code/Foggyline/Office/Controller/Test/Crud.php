@@ -13,6 +13,7 @@ class Crud extends \Foggyline\Office\Controller\Test
 	protected $cookieManagerInterface;
 	protected $configInterFace;
 	protected $logger;
+	protected $cache;
 	
 	public function __construct(
 		\Magento\Framework\App\Action\Context $context,
@@ -24,7 +25,8 @@ class Crud extends \Foggyline\Office\Controller\Test
 		\Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieMetadataFactory,
 		\Magento\Framework\Stdlib\CookieManagerInterface $cookieManagerInterface,
 		\Magento\Framework\Session\Config\ConfigInterface $configInterFace,
-		\Psr\Log\LoggerInterface $logger
+		\Psr\Log\LoggerInterface $logger,
+		\Foggyline\Office\Model\Cache $cache
 	)
 	{
 		$this->messageManager = $messageManager;
@@ -36,6 +38,7 @@ class Crud extends \Foggyline\Office\Controller\Test
 		$this->cookieManagerInterface = $cookieManagerInterface;
 		$this->configInterFace = $configInterFace;
 		$this->logger = $logger;
+		$this->cache = $cache;
 		return parent::__construct($context);
 	}	
 	public function execute()
@@ -173,11 +176,14 @@ class Crud extends \Foggyline\Office\Controller\Test
 		$cookieMetadata = $this->cookieMetadataFactory
 			->createSensitiveCookieMetadata()
 			->setPath($this->configInterFace->getCookiePath())
-			->setDomain($this->configInterFace->getCookieDomain())
-		
-			;
+			->setDomain($this->configInterFace->getCookieDomain());
 		$this->cookieManagerInterface->setSensitiveCookie('cookie_name_2', $cookieValue, $cookieMetadata);
-			
+		echo'<pre>';
+		print_r($this->configInterFace->getOptions());
+		echo'</pre>';
+		
+		
+		//Logger
 		$this->logger->log(\Monolog\Logger::DEBUG, 'debug mgr');
 		$this->logger->log(\Monolog\Logger::INFO, 'info msg');
 		$this->logger->log(\Monolog\Logger::NOTICE, 'info msg');
@@ -194,16 +200,40 @@ class Crud extends \Foggyline\Office\Controller\Test
 		
 		$this->logger->info('User logged in', ['user' => 'Branco', 'age' => '32']);
 		
-		echo'<pre>';
-		print_r($this->configInterFace->getOptions());
-		echo'</pre>';
+		// The Profiler
 		/*\Magento\Framework\Profiler::start('foggyline:office:blabla');
 		sleep(2);  // code block or single expression here
 		\Magento\Framework\Profiler::stop('foggyline:office:blabla');*/
 		
+		//Cache
+		$cacheId = 'some-specific-id';
+		$objInfo = null;
+		$_objInfo = $this->cache->load($cacheId);
 		
+		if ($_objInfo) {
+			$objInfo = unserialize($_objInfo);
+		} else {
+			$objInfo = [
+				'var1' => 'var1',
+				'var2' => 'var2',
+				'var3' => 'var3'
+			];
+			$this->cache->save(serialize($objInfo), $cacheId);
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
