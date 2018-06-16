@@ -194,13 +194,12 @@ class Crud extends \Foggyline\Office\Controller\Test
 		
 		$this->logger->info('User logged in', ['user' => 'Branco', 'age' => '32']);
 		
-		echo'<pre>';
+		/* echo'<pre>';
 		print_r($this->configInterFace->getOptions());
-		echo'</pre>';
+		echo'</pre>'; */
 		/*\Magento\Framework\Profiler::start('foggyline:office:blabla');
 		sleep(2);  // code block or single expression here
 		\Magento\Framework\Profiler::stop('foggyline:office:blabla');*/
-		
 		
 	}
 }
